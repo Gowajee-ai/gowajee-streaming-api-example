@@ -15,9 +15,9 @@ This React.js example demonstrates how to use the Gowajee Streaming API for real
 - Node.js and npm
 
 ## Installation
-    ```bash
-    npm install
-    ```
+```bash
+npm install
+```
 
 ## Configuration
 
@@ -25,26 +25,26 @@ Set Your API Key and WebSocket URL:
 
 Replace the placeholder APIKEY and URL with your actual API key and WebSocket URL in the src/AudioStreamer.js file.
 
-    ```javascript
-    const APIKEY = "your-api-key-here";
-    const URL = "wss://api.gowajee.ai/v1/speech-to-text/pulse/stream/transcribe";
-    ```
+```javascript
+const APIKEY = "your-api-key-here";
+const URL = "wss://api.gowajee.ai/v1/speech-to-text/pulse/stream/transcribe";
+```
 
 Set Buffer Size in Seconds (optional):
 
 Modify the chunkSize constant in the src/AudioStreamer.js file to change the buffer size. By default, it's set to 0.5 seconds.
 
-    ```javascript
-    const chunkSize = 0.5; // Buffer size in seconds
-    ```
+```javascript
+const chunkSize = 0.5; // Buffer size in seconds
+```
 
 Usage
 
 Start the Development Server
 
-    ```bash
-    npm start
-    ```
+```bash
+npm start
+```
 
 Access the Application
 Open your web browser and go to http://localhost:3000 to see the example in action.
