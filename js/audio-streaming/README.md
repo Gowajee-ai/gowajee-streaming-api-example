@@ -25,7 +25,7 @@ Set Your API Key and WebSocket URL:
 
 Replace the placeholder APIKEY and URL with your actual API key and WebSocket URL in the src/AudioStreamer.js file.
 
-    ```js
+    ```javascript
     const APIKEY = "your-api-key-here";
     const URL = "wss://api.gowajee.ai/v1/speech-to-text/pulse/stream/transcribe";
     ```
@@ -34,7 +34,7 @@ Set Buffer Size in Seconds (optional):
 
 Modify the chunkSize constant in the src/AudioStreamer.js file to change the buffer size. By default, it's set to 0.5 seconds.
 
-    ```js
+    ```javascript
     const chunkSize = 0.5; // Buffer size in seconds
     ```
 
