@@ -38,7 +38,7 @@ Modify the chunkSize constant in the src/AudioStreamer.js file to change the buf
 const chunkSize = 0.5; // Buffer size in seconds
 ```
 
-Usage
+## Usage
 
 Start the Development Server
 
