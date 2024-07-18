@@ -1,27 +1,28 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from "react";
 
 const AudioStreamer = () => {
+  const URL = "wss://api.gowajee.ai/v1/speech-to-text/pulse/stream/transcribe";
+  const API_KEY = "";
+  const sampleRate = 16000
+  const chunkSize = 0.5
+
   const [stream, setStream] = useState(null);
   const [isStreaming, setIsStreaming] = useState(false);
-  const [sampleRate, setSampleRate] = useState(16000); // Default sample rate
-  const [processingTranscript, setProcessingTranscript] = useState('');
-  const [transcription, setTranscription] = useState('');
-  const [chunkSize, setChunkSize] = useState(0.5);
+  const [processingTranscript, setProcessingTranscript] = useState("");
+  const [transcription, setTranscription] = useState("");
   const ws = useRef(null);
   const audioRef = useRef(null);
-  const URL = "wss://api.gowajee.ai/v1/speech-to-text/pulse/stream/transcribe"
-  const API_KEY = ""
 
   const initialMessage = {
     sampleRate: sampleRate,
-    boostWordList: ['โกวาจี'],
+    boostWordList: ["โกวาจี"],
     boostWordScore: 5,
-    };
+  };
 
   const floatToInt16 = (float32Array) => {
     const int16Array = new Int16Array(float32Array.length);
     for (let i = 0; i < float32Array.length; i++) {
-      int16Array[i] = Math.max(-1, Math.min(1, float32Array[i])) * 0x7FFF;
+      int16Array[i] = Math.max(-1, Math.min(1, float32Array[i])) * 0x7fff;
     }
     return int16Array;
   };
@@ -34,23 +35,22 @@ const AudioStreamer = () => {
   const startStreaming = async () => {
     try {
       // Initialize WebSocket connection
-      ws.current = new WebSocket(URL+"?x-api-key="+API_KEY);
-      console.log(URL+"?"+API_KEY);
+      ws.current = new WebSocket(URL + "?x-api-key=" + API_KEY);
       ws.current.onopen = () => {
-        console.log('WebSocket connection opened');
+        console.log("WebSocket connection opened");
 
         ws.current.send(JSON.stringify(initialMessage));
       };
 
       ws.current.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        if (data.type === 'ASR_PULSE_STREAM') {
+        if (data.type === "ASR_PULSE_STREAM") {
           const { event: asrEvent, results } = data.output;
           if (results && results.transcript) {
-            if (asrEvent === 'SpeakOn') {
-              setProcessingTranscript(results.transcript)
-            } else if (asrEvent === 'SpeakOff') {
-              setProcessingTranscript('')
+            if (asrEvent === "SpeakOn") {
+              setProcessingTranscript(results.transcript);
+            } else if (asrEvent === "SpeakOff") {
+              setProcessingTranscript("");
               setTranscription((prev) => prev + "\n" + results.transcript);
             }
           }
@@ -58,17 +58,19 @@ const AudioStreamer = () => {
       };
 
       ws.current.onclose = () => {
-        console.log('WebSocket connection closed');
+        console.log("WebSocket connection closed");
       };
 
-      const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+      });
       setStream(mediaStream);
       audioRef.current.srcObject = mediaStream;
 
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate });
+      const audioContext = new (window.AudioContext ||
+        window.webkitAudioContext)({ sampleRate });
       const source = audioContext.createMediaStreamSource(mediaStream);
       const bufferSize = calculateBufferSize(sampleRate, chunkSize);
-      console.log(bufferSize);
       const processor = audioContext.createScriptProcessor(bufferSize, 1, 1);
 
       source.connect(processor);
@@ -82,17 +84,15 @@ const AudioStreamer = () => {
         }
       };
 
-      
-
       setIsStreaming(true);
     } catch (err) {
-      console.error('Error accessing the microphone', err);
+      console.error("Error accessing the microphone", err);
     }
   };
 
   const stopStreaming = () => {
     if (stream) {
-      stream.getTracks().forEach(track => track.stop());
+      stream.getTracks().forEach((track) => track.stop());
     }
     setIsStreaming(false);
 
@@ -113,16 +113,17 @@ const AudioStreamer = () => {
 
   return (
     <div>
-      <audio ref={audioRef} autoPlay style={{ display: 'none' }} muted/>
+      <audio ref={audioRef} autoPlay style={{ display: "none" }} muted />
 
       <button onClick={isStreaming ? stopStreaming : startStreaming}>
-        {isStreaming ? 'Stop Streaming' : 'Start Streaming'}
+        {isStreaming ? "Stop Streaming" : "Start Streaming"}
       </button>
-      <div style={{ marginTop: '20px', maxWidth: '800px', padding: '10px' }}>
-        <p style={{ whiteSpace: 'pre', fontSize: '16px' }}>{transcription}</p>
-        <p style={{ whiteSpace: 'pre', fontSize: '16px', color: 'red' }}>{processingTranscript}</p>
+      <div style={{ marginTop: "20px", maxWidth: "800px", padding: "10px" }}>
+        <p style={{ whiteSpace: "pre", fontSize: "16px" }}>{transcription}</p>
+        <p style={{ whiteSpace: "pre", fontSize: "16px", color: "red" }}>
+          {processingTranscript}
+        </p>
       </div>
-     
     </div>
   );
 };

@@ -8,6 +8,7 @@ CHUNK_SIZE = int(SAMPLE_RATE * 0.5)
 APIKEY = ""
 URL = "wss://api.gowajee.ai/v1/speech-to-text/pulse/stream/transcribe"
 
+
 def custom_print(message, newline=True):
     if newline:
         # Print message and start a new line
@@ -15,6 +16,7 @@ def custom_print(message, newline=True):
     else:
         # Print message but replace the same line
         print(message, end='\r', flush=True)
+
 
 async def send_audio_chunks(websocket, py_stream):
     """
@@ -38,11 +40,13 @@ async def send_audio_chunks(websocket, py_stream):
             transcription = results.get("transcript", "") if results else ""
 
             if output["event"] == "SpeakOn":
-                custom_print(output["event"] + ": " + transcription, newline=True)
+                custom_print(output["event"] + ": " +
+                             transcription, newline=True)
 
             if output["event"] == "SpeakOff":
                 custom_print(output["event"] + ": " + transcription)
-        
+
+
 async def microphone_to_websocket():
     """
     Establishes a WebSocket connection and starts sending microphone data.
@@ -77,4 +81,4 @@ async def microphone_to_websocket():
         p.terminate()
 
 if __name__ == "__main__":
-  asyncio.run(microphone_to_websocket())
+    asyncio.run(microphone_to_websocket())
